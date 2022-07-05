@@ -10,25 +10,15 @@ type categoryRepository struct {
 }
 
 func (c *categoryRepository) Insert(newCategory *Category) Category {
-	var category Category
-	category = Category{
-		Id:   newCategory.Id,
-		Name: newCategory.Name,
-	}
-	c.db = append(c.db, category)
-	return category
+	c.db = append(c.db, *newCategory)
+	return *newCategory
 }
 
 func (c *categoryRepository) List() []Category {
-	var categories []Category
-	for _, category := range c.db {
-		categories = append(categories, category)
-	}
-	return categories
+	return c.db
 }
 
-func NewCategoryRepository(db []Category) CategoryRepository {
+func NewCategoryRepository() CategoryRepository {
 	repo := new(categoryRepository)
-	repo.db = db
 	return repo
 }
