@@ -15,10 +15,11 @@ type appServer struct {
 
 func Server() *appServer {
 	r := gin.Default()
-	repoManager := manager.NewRepositoryManager()
+	appConfig := config.NewConfig()
+	infra := manager.NewInfra(appConfig)
+	repoManager := manager.NewRepositoryManager(infra)
 	useCaseManager := manager.NewUseCaseManager(repoManager)
-	c := config.NewConfig()
-	host := c.Url
+	host := appConfig.Url
 	return &appServer{
 		useCaseManager: useCaseManager,
 		engine:         r,

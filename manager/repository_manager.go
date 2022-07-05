@@ -5,21 +5,20 @@ import (
 )
 
 type RepositoryManager interface {
-	// Disini kumpulan semua repo dalam 1 project yang dibuat
+	// ProductRepo Disini kumpulan semua repo dalam 1 project yang dibuat
 	ProductRepo() repository.ProductRepository
 }
 
 type repositoryManager struct {
-	productRepo repository.ProductRepository
+	infra Infra
 }
 
 func (r *repositoryManager) ProductRepo() repository.ProductRepository {
-	return r.productRepo
+	return repository.NewProductRepository(r.infra.SqlDb())
 }
 
-func NewRepositoryManager() RepositoryManager {
-	productRepo := repository.NewProductRepository()
+func NewRepositoryManager(infra Infra) RepositoryManager {
 	return &repositoryManager{
-		productRepo: productRepo,
+		infra: infra,
 	}
 }

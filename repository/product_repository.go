@@ -1,6 +1,9 @@
 package repository
 
-import "github.com/jutionck/golang-api-with-gin/model"
+import (
+	"github.com/jutionck/golang-api-with-gin/model"
+	"gorm.io/gorm"
+)
 
 type ProductRepository interface {
 	Add(newpProduct *model.Product) error
@@ -8,19 +11,28 @@ type ProductRepository interface {
 }
 
 type productRepository struct {
-	productDb []model.Product
+	db *gorm.DB
 }
 
 func (p *productRepository) Retrieve() ([]model.Product, error) {
-	return p.productDb, nil
+	var products []model.Product
+	err := p.db.Find(&products).Error
+	if err != nil {
+		return nil, err
+	}
+	return products, nil
 }
 
 func (p *productRepository) Add(newpProduct *model.Product) error {
-	p.productDb = append(p.productDb, *newpProduct)
+	err := p.db.Create(&newpProduct).Error
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
-func NewProductRepository() ProductRepository {
+func NewProductRepository(db *gorm.DB) ProductRepository {
 	repo := new(productRepository)
+	repo.db = db
 	return repo
 }
