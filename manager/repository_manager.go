@@ -1,7 +1,6 @@
 package manager
 
 import (
-	"github.com/jutionck/golang-api-with-gin/model"
 	"github.com/jutionck/golang-api-with-gin/repository"
 )
 
@@ -11,13 +10,16 @@ type RepositoryManager interface {
 }
 
 type repositoryManager struct {
-	productDb []model.Product
+	productRepo repository.ProductRepository
 }
 
 func (r *repositoryManager) ProductRepo() repository.ProductRepository {
-	return repository.NewProductRepository(&r.productDb)
+	return r.productRepo
 }
 
 func NewRepositoryManager() RepositoryManager {
-	return &repositoryManager{}
+	productRepo := repository.NewProductRepository()
+	return &repositoryManager{
+		productRepo: productRepo,
+	}
 }

@@ -8,20 +8,19 @@ type ProductRepository interface {
 }
 
 type productRepository struct {
-	productDb *[]model.Product
+	productDb []model.Product
 }
 
 func (p *productRepository) Retrieve() ([]model.Product, error) {
-	return *p.productDb, nil
+	return p.productDb, nil
 }
 
 func (p *productRepository) Add(newpProduct *model.Product) error {
-	*p.productDb = append(*p.productDb, *newpProduct)
+	p.productDb = append(p.productDb, *newpProduct)
 	return nil
 }
 
-func NewProductRepository(productDb *[]model.Product) ProductRepository {
+func NewProductRepository() ProductRepository {
 	repo := new(productRepository)
-	repo.productDb = productDb
 	return repo
 }
