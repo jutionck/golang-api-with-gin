@@ -2,53 +2,41 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/jutionck/golang-api-with-gin/delivery/api"
 	"github.com/jutionck/golang-api-with-gin/model"
 	"github.com/jutionck/golang-api-with-gin/usecase"
-	"net/http"
+	"github.com/jutionck/golang-api-with-gin/utils"
 )
 
 type ProductController struct {
 	router        *gin.Engine
 	ucProduct     usecase.CreateProductUseCase
 	ucProductList usecase.ListProductUseCase
+	api.BaseApi
 }
 
 func (p *ProductController) createNewProduct(c *gin.Context) {
-	var newProduct *model.Product
-	if err := c.BindJSON(&newProduct); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"status":  "BAD REQUEST",
-			"message": err.Error(),
-		})
-	} else {
-		err := p.ucProduct.CreateProduct(newProduct)
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-				"status":  "FAILED",
-				"message": "Error when creating Product",
-			})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{
-			"status":  "SUCCESS",
-			"message": newProduct,
-		})
+	var newProduct model.Product
+	err := p.ParseRequestBody(c, &newProduct)
+	if err != nil {
+		p.Failed(c, utils.RequiredError())
+		return
 	}
+	err = p.ucProduct.CreateProduct(&newProduct)
+	if err != nil {
+		p.Failed(c, err)
+		return
+	}
+	p.Success(c, newProduct)
 }
 
 func (p *ProductController) findAllProduct(c *gin.Context) {
 	products, err := p.ucProductList.List()
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"status":  "FAILED",
-			"message": "Error when creating Product",
-		})
+		p.Failed(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"status":  "SUCCESS",
-		"message": products,
-	})
+	p.Success(c, products)
 }
 
 func NewProductController(

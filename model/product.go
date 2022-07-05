@@ -1,7 +1,7 @@
 package model
 
 type Product struct {
-	ProductId   string `json:"productId"`
-	ProductName string `json:"productName"`
+	ProductId   string `json:"productId" binding:"required"`
+	ProductName string `json:"productName" binding:"required"`
 	IsStatus    bool   `json:"isStatus"`
 }
