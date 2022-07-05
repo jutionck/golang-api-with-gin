@@ -1,12 +1,11 @@
 package delivery
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/jutionck/golang-api-with-gin/config"
 	"github.com/jutionck/golang-api-with-gin/delivery/controller"
 	"github.com/jutionck/golang-api-with-gin/repository"
 	"github.com/jutionck/golang-api-with-gin/usecase"
-	"os"
 )
 
 type appServer struct {
@@ -21,9 +20,8 @@ func Server() *appServer {
 	productRepo := repository.NewProductRepository()
 	productUc := usecase.NewCreateProductUseCase(productRepo)
 	productUcList := usecase.NewListProductUseCase(productRepo)
-	apiHost := os.Getenv("API_HOST")
-	apiPort := os.Getenv("API_PORT")
-	host := fmt.Sprintf("%s:%s", apiHost, apiPort)
+	c := config.NewConfig()
+	host := c.Url
 	return &appServer{
 		productUc:     productUc,
 		productUcList: productUcList,
