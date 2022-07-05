@@ -4,34 +4,30 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jutionck/golang-api-with-gin/config"
 	"github.com/jutionck/golang-api-with-gin/delivery/controller"
-	"github.com/jutionck/golang-api-with-gin/repository"
-	"github.com/jutionck/golang-api-with-gin/usecase"
+	"github.com/jutionck/golang-api-with-gin/manager"
 )
 
 type appServer struct {
-	productUc     usecase.CreateProductUseCase
-	productUcList usecase.ListProductUseCase
-	engine        *gin.Engine
-	host          string
+	useCaseManager manager.UseCaseManager
+	engine         *gin.Engine
+	host           string
 }
 
 func Server() *appServer {
 	r := gin.Default()
-	productRepo := repository.NewProductRepository()
-	productUc := usecase.NewCreateProductUseCase(productRepo)
-	productUcList := usecase.NewListProductUseCase(productRepo)
+	repoManager := manager.NewRepositoryManager()
+	useCaseManager := manager.NewUseCaseManager(repoManager)
 	c := config.NewConfig()
 	host := c.Url
 	return &appServer{
-		productUc:     productUc,
-		productUcList: productUcList,
-		engine:        r,
-		host:          host,
+		useCaseManager: useCaseManager,
+		engine:         r,
+		host:           host,
 	}
 }
 
 func (a *appServer) initControllers() {
-	controller.NewProductController(a.engine, a.productUc, a.productUcList)
+	controller.NewProductController(a.engine, a.useCaseManager.CreateProductUseCase(), a.useCaseManager.ListProductUseCase())
 }
 
 func (a *appServer) Run() {
