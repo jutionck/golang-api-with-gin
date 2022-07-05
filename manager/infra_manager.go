@@ -6,6 +6,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
+	"os"
 )
 
 // Infra disini bertugas sebagai database penyimpanan pengganti slice
@@ -31,7 +32,14 @@ func NewInfra(config config.Config) Infra {
 
 func initDbResource(dataSourceName string) (*gorm.DB, error) {
 	db, err := gorm.Open(postgres.Open(dataSourceName), &gorm.Config{})
-	db.AutoMigrate(&model.Product{})
+
+	env := os.Getenv("ENV")
+	if env == "migration" {
+		db.Debug()
+		db.AutoMigrate(&model.Product{})
+	} else if env == "dev" {
+		db.Debug()
+	}
 	if err != nil {
 		return nil, err
 	}
