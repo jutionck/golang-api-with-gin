@@ -1,38 +1,35 @@
 package manager
 
 import (
+	"fmt"
 	"github.com/jutionck/golang-api-with-gin/config"
 	"github.com/jutionck/golang-api-with-gin/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
 	"os"
 )
 
 // Infra disini bertugas sebagai database penyimpanan pengganti slice
-type Infra interface {
+type InfraManager interface {
 	SqlDb() *gorm.DB
 }
 
-type infra struct {
-	db *gorm.DB
+type infraManager struct {
+	db  *gorm.DB
+	cfg config.Config
 }
 
-func (i *infra) SqlDb() *gorm.DB {
+func (i *infraManager) SqlDb() *gorm.DB {
 	return i.db
 }
 
-func NewInfra(config config.Config) Infra {
-	resource, err := initDbResource(config.DataSourceName)
+func (i *infraManager) initDb() {
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", i.cfg.Host, i.cfg.User, i.cfg.Password, i.cfg.DbName, i.cfg.Port)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatal(err.Error())
+		panic(err)
 	}
-	return &infra{db: resource}
-}
-
-func initDbResource(dataSourceName string) (*gorm.DB, error) {
-	db, err := gorm.Open(postgres.Open(dataSourceName), &gorm.Config{})
-
+	i.db = db
 	env := os.Getenv("ENV")
 	if env == "migration" {
 		db.Debug()
@@ -40,8 +37,10 @@ func initDbResource(dataSourceName string) (*gorm.DB, error) {
 	} else if env == "dev" {
 		db.Debug()
 	}
-	if err != nil {
-		return nil, err
-	}
-	return db, nil
+}
+
+func NewInfra(config config.Config) InfraManager {
+	infra := infraManager{cfg: config}
+	infra.initDb()
+	return &infra
 }

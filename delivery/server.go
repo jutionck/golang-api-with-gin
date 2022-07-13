@@ -1,6 +1,7 @@
 package delivery
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jutionck/golang-api-with-gin/config"
 	"github.com/jutionck/golang-api-with-gin/delivery/controller"
@@ -19,7 +20,7 @@ func Server() *appServer {
 	infra := manager.NewInfra(appConfig)
 	repoManager := manager.NewRepositoryManager(infra)
 	useCaseManager := manager.NewUseCaseManager(repoManager)
-	host := appConfig.Url
+	host := fmt.Sprintf("%s:%s", appConfig.ApiHost, appConfig.ApiPort)
 	return &appServer{
 		useCaseManager: useCaseManager,
 		engine:         r,

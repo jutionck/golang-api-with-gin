@@ -1,16 +1,20 @@
 package config
 
 import (
-	"fmt"
 	"os"
 )
 
 type ApiConfig struct {
-	Url string
+	ApiHost string
+	ApiPort string
 }
 
 type DbConfig struct {
-	DataSourceName string
+	Host     string
+	Port     string
+	DbName   string
+	User     string
+	Password string
 }
 
 type Config struct {
@@ -18,17 +22,19 @@ type Config struct {
 	DbConfig
 }
 
-func (c *Config) readConfig() {
-	api := os.Getenv("API_URL")
-	dbHost := os.Getenv("DB_HOST")
-	dbPort := os.Getenv("DB_PORT")
-	dbName := os.Getenv("DB_NAME")
-	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASSWORD")
-
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s", dbHost, dbUser, dbPassword, dbName, dbPort)
-	c.DbConfig = DbConfig{DataSourceName: dsn}
-	c.ApiConfig = ApiConfig{Url: api}
+func (c Config) readConfig() Config {
+	c.DbConfig = DbConfig{
+		Host:     os.Getenv("DB_HOST"),
+		Port:     os.Getenv("DB_PORT"),
+		DbName:   os.Getenv("DB_NAME"),
+		User:     os.Getenv("DB_USER"),
+		Password: os.Getenv("DB_PASSWORD"),
+	}
+	c.ApiConfig = ApiConfig{
+		ApiHost: os.Getenv("API_HOST"),
+		ApiPort: os.Getenv("API_PORT"),
+	}
+	return c
 }
 
 func NewConfig() Config {
