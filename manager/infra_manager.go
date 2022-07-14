@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/jutionck/golang-api-with-gin/config"
 	"github.com/jutionck/golang-api-with-gin/model"
+	"github.com/jutionck/golang-api-with-gin/utils"
+	"github.com/rs/zerolog"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"os"
@@ -13,11 +15,17 @@ import (
 type InfraManager interface {
 	SqlDb() *gorm.DB
 	FilePath() string
+	Log() *zerolog.Logger
 }
 
 type infraManager struct {
 	db  *gorm.DB
 	cfg config.Config
+	log *zerolog.Logger
+}
+
+func (i *infraManager) Log() *zerolog.Logger {
+	return i.log
 }
 
 func (i *infraManager) SqlDb() *gorm.DB {
@@ -47,5 +55,6 @@ func (i *infraManager) initDb() {
 func NewInfra(config config.Config) InfraManager {
 	infra := infraManager{cfg: config}
 	infra.initDb()
+	infra.log = utils.NewLogger()
 	return &infra
 }

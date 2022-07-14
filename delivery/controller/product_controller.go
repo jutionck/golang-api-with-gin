@@ -54,12 +54,14 @@ func (p *ProductController) findAllProduct(c *gin.Context) {
 }
 func (p *ProductController) findImageById(c *gin.Context) {
 	productId := c.Param("id")
-	product, err := p.ucFindProduct.ById(productId)
+	//product, err := p.ucFindProduct.ById(productId)
+	_, err := p.ucFindProduct.ById(productId)
 	if err != nil {
 		p.Failed(c, err)
 		return
 	}
-	p.SuccessDownload(c, product.ImgPath)
+	//p.SuccessDownload(c, product.ImgPath)
+	p.Failed(c, errors.New("sss"))
 }
 
 func NewProductController(
