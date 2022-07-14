@@ -29,7 +29,7 @@ func Server() *appServer {
 }
 
 func (a *appServer) initControllers() {
-	controller.NewProductController(a.engine, a.useCaseManager.CreateProductUseCase(), a.useCaseManager.ListProductUseCase())
+	controller.NewProductController(a.engine, a.useCaseManager.CreateProductUseCase(), a.useCaseManager.ListProductUseCase(), a.useCaseManager.FindProductUseCase())
 }
 
 func (a *appServer) Run() {

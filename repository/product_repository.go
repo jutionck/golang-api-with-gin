@@ -8,6 +8,7 @@ import (
 type ProductRepository interface {
 	Add(newpProduct *model.Product) error
 	Retrieve() ([]model.Product, error)
+	FindById(id string) (model.Product, error)
 }
 
 type productRepository struct {
@@ -23,6 +24,14 @@ func (p *productRepository) Retrieve() ([]model.Product, error) {
 	return products, nil
 }
 
+func (p *productRepository) FindById(id string) (model.Product, error) {
+	var product model.Product
+	err := p.db.First(&product, "product_id=?", id).Error
+	if err != nil {
+		return model.Product{}, err
+	}
+	return product, nil
+}
 func (p *productRepository) Add(newpProduct *model.Product) error {
 	err := p.db.Create(&newpProduct).Error
 	if err != nil {

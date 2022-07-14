@@ -31,6 +31,10 @@ func (b *BaseApi) Success(c *gin.Context, data interface{}) {
 	response.NewSuccessJsonResponse(c, data).Send()
 }
 
+func (b *BaseApi) SuccessDownload(c *gin.Context, filePath string) {
+	response.NewSuccessFileResponse(c, filePath).Send()
+}
+
 func (b *BaseApi) Failed(c *gin.Context, err error) {
 	response.NewErrorJsonResponse(c, err).Send()
 }

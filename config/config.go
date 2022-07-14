@@ -4,6 +4,9 @@ import (
 	"os"
 )
 
+type FilePathConfig struct {
+	FilePath string
+}
 type ApiConfig struct {
 	ApiHost string
 	ApiPort string
@@ -20,6 +23,7 @@ type DbConfig struct {
 type Config struct {
 	ApiConfig
 	DbConfig
+	FilePathConfig
 }
 
 func (c Config) readConfig() Config {
@@ -34,11 +38,11 @@ func (c Config) readConfig() Config {
 		ApiHost: os.Getenv("API_HOST"),
 		ApiPort: os.Getenv("API_PORT"),
 	}
+	c.FilePathConfig = FilePathConfig{FilePath: os.Getenv("FILE_PATH")}
 	return c
 }
 
 func NewConfig() Config {
 	cfg := Config{}
-	cfg.readConfig()
-	return cfg
+	return cfg.readConfig()
 }

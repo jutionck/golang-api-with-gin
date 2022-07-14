@@ -12,6 +12,7 @@ import (
 // Infra disini bertugas sebagai database penyimpanan pengganti slice
 type InfraManager interface {
 	SqlDb() *gorm.DB
+	FilePath() string
 }
 
 type infraManager struct {
@@ -21,6 +22,10 @@ type infraManager struct {
 
 func (i *infraManager) SqlDb() *gorm.DB {
 	return i.db
+}
+
+func (i *infraManager) FilePath() string {
+	return i.cfg.FilePath
 }
 
 func (i *infraManager) initDb() {
