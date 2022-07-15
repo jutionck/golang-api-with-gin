@@ -23,6 +23,7 @@ func (c *createProductUseCase) CreateProduct(newProduct *model.Product, file mul
 		return err
 	}
 	newProduct.ImgPath = fileLocation
+	newProduct.UrlPath = fmt.Sprintf("/product/image/%s", newProduct.ProductId)
 	err = c.repo.Add(newProduct)
 	if err != nil {
 		return err

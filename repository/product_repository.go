@@ -17,7 +17,7 @@ type productRepository struct {
 
 func (p *productRepository) Retrieve() ([]model.Product, error) {
 	var products []model.Product
-	err := p.db.Find(&products).Error
+	err := p.db.Select("product_id", "product_name", "is_status", "url_path").Find(&products).Error
 	if err != nil {
 		return nil, err
 	}
